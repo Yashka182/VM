@@ -16,7 +16,7 @@ def v(i, j, k):
     return (u(i, j) - u(j, k))/(x[i] - x[k])
 
 
-n = 14
+n = 15
 a = [0, 0]
 for i in range(2, n+1):
     a.append(0.5)
@@ -69,12 +69,24 @@ for i in range(2, n+1):
 
 def getvalue(y):
     t = 0
+    P = 0
     for i in range(n):
         if x[i] < y < x[i+1]:
-            t = i
+            t = i + 1
             print(t)
+            P = F[t] + Bi[t]*(y - x[t]) + 0.5*Ci[t]*(y - x[t])**2 + (1/6)*Di[t]*(y - x[t])**3
             break
-    return F[t] + Bi[t]*(y - x[t]) + 0.5*Ci[t]*(y - x[t])**2 + (1/6)*Di[t]*(y - x[t])**3
+        elif(y==x[i+1]):
+            P = F[i+1]
+    return P
+
+h = 0.02
+
+
+def getderivative1(y):
+
+    return (getvalue(y + h) - getvalue(y - h))/(2*h)
+
 
 
 M = 2.3
@@ -90,12 +102,21 @@ def f(z):
 
 print(f(M))
 
+
 lag = 0.001
-X = np.arange(0, 3, 3)
+X = np.arange(0, 3.1, 0.1)
 fig = plt.figure()
-plt.plot(X, getvalue(X), color='red')
-plt.plot(X, f(X), color='blue')
+val = []
+der = []
+for i in range(len(X)):
+    val.append(getvalue(X[i]))
+for i in range(len(X)):
+    der.append(getderivative1(X[i]))
+plt.plot(X, val, color = "red", linestyle = "solid")
+plt.plot(X, f(X), color = "blue", linestyle="dashed")
+plt.plot(X, der, color = "green", linestyle="solid")
 for i in range(len(x)):
     plt.scatter(x[i], F[i])
+
 
 plt.show()
